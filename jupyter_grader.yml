@@ -1,0 +1,10 @@
+---
+name: jupyter_grader
+version: 0.1.0
+patches:
+     openedx-dockerfile-pre-assets: |
+          ## This plugin and patches allow us to add URL and namespaces to edx-platform ##
+          RUN echo "urlpatterns += (url(r'^api/jupyter_graded/', include('xblock_jupyter_graded.rest.urls', namespace='xblock_jupyter_graded')),)" >> lms/urls.py
+          RUN echo "urlpatterns += (url(r'^api/jupyter_graded/', include('xblock_jupyter_graded.rest.urls', namespace='xblock_jupyter_graded')),)" >> cms/urls.py
+          RUN sed -i "s/# edx-drf-extensions/'xblock_jupyter_graded',/g" lms/envs/common.py
+          RUN sed -i "s/# DRF filters/'xblock_jupyter_graded',/g" cms/envs/common.py
