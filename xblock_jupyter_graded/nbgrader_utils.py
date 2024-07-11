@@ -4,12 +4,12 @@ import os
 import pkg_resources
 from subprocess import Popen, PIPE
 
-from config import (
+from .config import (
     RELEASE, SUBMITTED, SOURCE, AUTOGRADED, FEEDBACK, EDX_ROOT, CONT_ROOT
 )
 import file_manager as fm
 import container_manager as cm
-from exceptions import DockerContainerError, ValidationError
+from .exceptions import DockerContainerError, ValidationError
 
 log = logging.getLogger(__name__)
 

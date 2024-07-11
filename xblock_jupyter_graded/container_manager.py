@@ -3,9 +3,9 @@ import os
 from subprocess import Popen, PIPE
 import pkg_resources
 
-from config import EDX_ROOT
-from models import Requirement
-from exceptions import DockerBuildError
+from .config import EDX_ROOT
+from .models import Requirement
+from .exceptions import DockerBuildError
 
 log = logging.getLogger(__name__)
 

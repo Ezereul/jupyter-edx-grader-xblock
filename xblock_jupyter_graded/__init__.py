@@ -1,5 +1,5 @@
 import os
-from config import EDX_ROOT
+from .config import EDX_ROOT
 
 default_app_config = 'xblock_jupyter_graded.apps.JupyterGradedXBlock'
 

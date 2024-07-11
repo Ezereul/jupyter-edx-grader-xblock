@@ -7,8 +7,8 @@ import nbformat
 import shutil
 import tempfile
 
-from exceptions import ValidationError
-from config import (
+from .exceptions import ValidationError
+from .config import (
     RELEASE, SUBMITTED, SOURCE, AUTOGRADED, FEEDBACK, EDX_ROOT
 )
 

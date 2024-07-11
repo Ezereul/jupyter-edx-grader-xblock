@@ -4,7 +4,7 @@ import json
 import logging
 import os
 import pkg_resources
-from urllib import urlencode
+from urllib.parse import urlencode
 from webob import Response
 
 from django.core.urlresolvers import reverse
@@ -12,7 +12,7 @@ from django.template import Template, Context
 from django.utils import timezone, dateparse
 import nbgrader_utils as nbu
 
-from scorable import ScorableXBlockMixin, Score
+from .scorable import ScorableXBlockMixin, Score
 
 from xblock.core import XBlock
 from xblock.fields import Scope, String, Integer, Float, Boolean, List
