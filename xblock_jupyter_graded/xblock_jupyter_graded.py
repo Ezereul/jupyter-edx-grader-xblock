@@ -185,7 +185,7 @@ class JupyterGradedXBlock(StudioEditableXBlockMixin, ScorableXBlockMixin,
 
         frag = Fragment(html)
         frag.add_javascript(loader.load_unicode('/static/js/student.js'))
-	frag.add_css(loader.load_unicode('static/css/styles.css'))
+        frag.add_css(loader.load_unicode('static/css/styles.css'))
         frag.initialize_js('JupyterGradedXBlock', {'xblock_id': self._get_xblock_loc()})
 
         return frag
@@ -220,7 +220,7 @@ class JupyterGradedXBlock(StudioEditableXBlockMixin, ScorableXBlockMixin,
 
         frag = Fragment(html)
         frag.add_javascript(loader.load_unicode("/static/js/author.js"))
-	frag.add_css(loader.load_unicode('static/css/styles.css'))
+        frag.add_css(loader.load_unicode('static/css/styles.css'))
         frag.initialize_js('JupyterGradedXBlock', {'xblock_id': self._get_xblock_loc()})
 
         return frag
@@ -239,7 +239,7 @@ class JupyterGradedXBlock(StudioEditableXBlockMixin, ScorableXBlockMixin,
             return Response(body=json.dumps(error), 
                 content_type="application/json", status=200);
 
-	try:
+        try:
             # Run Container to get max possible score and generate student 
             # version
             max_score = nbu.generate_student_nb(
@@ -262,7 +262,7 @@ class JupyterGradedXBlock(StudioEditableXBlockMixin, ScorableXBlockMixin,
                 'student_download_url': self._get_nb_url('student')
                 }
 
-	except Exception as e:
+        except Exception as e:
             log.exception(e)
             response = {'success': False, 'error': str(e)}
     

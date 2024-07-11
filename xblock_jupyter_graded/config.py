@@ -1,7 +1,7 @@
 """Application config"""
 
 # Root directory where nbgrader data will be stored in EdX
-EDX_ROOT = "/var/www/nbgrader/courses/"
+EDX_ROOT = "/openedx/nbgrader/courses/"
 
 # Root directory where nbgrader data will be stored in Container
 CONT_ROOT = "/home/nbgrader/course/"
