@@ -7,8 +7,8 @@ from subprocess import Popen, PIPE
 from .config import (
     RELEASE, SUBMITTED, SOURCE, AUTOGRADED, FEEDBACK, EDX_ROOT, CONT_ROOT
 )
-import file_manager as fm
-import container_manager as cm
+import xblock_jupyter_graded.file_manager as fm
+import xblock_jupyter_graded.container_manager as cm
 from .exceptions import DockerContainerError, ValidationError
 
 log = logging.getLogger(__name__)

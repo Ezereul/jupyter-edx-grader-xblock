@@ -8,8 +8,8 @@ from django.http import HttpResponse
 from opaque_keys.edx.keys import CourseKey, UsageKey
 from opaque_keys import InvalidKeyError
 
-from student.models import CourseEnrollment
-from student.auth import has_studio_write_access
+from common.djangoapps.student.models import CourseEnrollment
+from common.djangoapps.student.auth import has_studio_write_access
 
 from xmodule.modulestore.django import modulestore
 
