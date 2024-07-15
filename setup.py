@@ -38,6 +38,6 @@ setup(
             'xblock_jupyter_graded = xblock_jupyter_graded:JupyterGradedXBlock',
         ]
     },
-    package_data=package_data("xblock_jupyter_graded", ["static", "migrations",
+    package_data=package_data("xblock_jupyter_graded", ["static", "public", "migrations",
         "templates", "translations", "rest", "docker"]),
 )
