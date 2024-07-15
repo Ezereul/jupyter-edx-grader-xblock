@@ -10,7 +10,7 @@ from webob import Response
 from django.urls import reverse
 from django.template import Template, Context
 from django.utils import timezone, dateparse
-import nbgrader_utils as nbu
+from . import nbgrader_utils as nbu
 
 from .scorable import ScorableXBlockMixin, Score
 
