@@ -84,7 +84,7 @@ def _run_assign_container(nb_filename, course_id, unit_id):
     cont_release_path = os.path.join(CONT_ROOT, RELEASE, 'ps1')
 
     cmd = [
-        'sudo', '-u', 'jupyter', 'docker', 'run', '-t',
+        'docker', 'run', '-t',
         '-v', "{}:{}".format(host_source_path, cont_source_path),
         '-v', "{}:{}".format(host_release_path, cont_release_path),
         course_id.lower(), 'python', '/home/jupyter/run_grader.py', 
@@ -95,7 +95,7 @@ def _run_assign_container(nb_filename, course_id, unit_id):
     out, err = p.communicate()
 
     if p.returncode != 0:
-        raise DockerContainerError(err.decode('utf-8'));
+        raise DockerContainerError(err.decode('utf-8'))
 
     nb_name = os.path.splitext(nb_filename)[0]
     result_fn = "{}_results.json".format(nb_name)
@@ -165,7 +165,7 @@ def _run_autograde_container(nb_filename, course_id, unit_id, username,
         out, err = p.communicate()
 
         if p.returncode != 0:
-            raise DockerContainerError(err.decode('utf-8'));
+            raise DockerContainerError(err.decode('utf-8'))
 
     # Get and read results
     nb_name = os.path.splitext(nb_filename)[0]
