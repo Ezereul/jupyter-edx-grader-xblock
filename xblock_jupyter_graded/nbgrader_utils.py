@@ -186,7 +186,8 @@ def update_requirements(course_id, f):
     """Updates Requirements model file this course_id"""
     course = normalize_course_id(course_id)
     try:
-        packages = f.file.readlines() 
+        with open(f.file.read(), 'r', encoding="utf-8") as file:
+            packages = file.readlines()
     except AttributeError:
         raise ValidationError("No File Attached")
     manager = cm.ContainerManager(course)
