@@ -69,36 +69,40 @@
 }
 
 .section-scores {
-	margin-left: 25px;
+    margin-left: 25px;
 }
 
 .text-center {
-	text-align: center;
+    text-align: center;
 }
 
 .section-scores tr {
-	border: 1px solid gray;
-	border-collapse: collapse;
+    border: 1px solid gray;
+    border-collapse: collapse;
 }
 
 .section-scores tr td {
-	padding: 5px 15px;
+    padding: 5px 15px;
 }
 
-.text-success {
-  color: #3c763d;
+.section-scores th {
+    padding: 5px 15px;
 }
 
-.text-danger {
-  color: #a94442;
+.result-success {
+  color: #000000 !important;
+}
+
+.result-danger {
+  color: #000000 !important;
 }
 
 .bg-success {
-  background-color: #dff0d8;
+    color: #3c763d;
 }
 
 .bg-danger {
-  background-color: #f2dede;
+    color: #a94442;
 }
 
 .bullets {

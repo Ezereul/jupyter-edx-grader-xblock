@@ -6,9 +6,9 @@
     <tr>
 {% for section in section_scores %}
     {% if section.failed_tests %}
-        <tr class="text-danger bg-danger">
+        <tr class="result-danger bg-danger">
     {% else %}
-        <tr class="text-success bg-success">
+        <tr class="result-success bg-success">
     {% endif %}
         <td>{{ section.name }}</td>
         <td class="text-center">{{ section.score }} / {{ section.max_score }}</td>

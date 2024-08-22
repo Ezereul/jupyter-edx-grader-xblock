@@ -118,7 +118,8 @@ class ContainerManager(object):
         # building at the same time
 
         cmd = [
-            'sudo', '-u', 'jupyter', 'docker', 'build', dockerfile_path,
+            'sudo', '-u', 'jupyter',
+            'docker', 'build', dockerfile_path,
             '-t', self.course_id.lower(),
             '--build-arg', 'PACKAGES={}'.format(pkg_str)
         ]

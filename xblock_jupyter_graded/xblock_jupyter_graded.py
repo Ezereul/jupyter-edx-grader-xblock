@@ -336,6 +336,7 @@ class JupyterGradedXBlock(StudioEditableXBlockMixin, ScorableXBlockMixin,
         log.info("Handling requirements.txt upload for course: {}, xblock: {}"\
             .format(str(self.course_id), str(self.location)))
         try:
+            print(request.params['file'], 'type:', type(request.params['file']))
             f = request.params['file']
             nbu.update_requirements(str(self.course_id), f)
             req = nbu.get_requirements(str(self.course_id))

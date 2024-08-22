@@ -5,7 +5,7 @@ import pkg_resources
 from subprocess import Popen, PIPE
 
 from .config import (
-    RELEASE, SUBMITTED, SOURCE, AUTOGRADED, FEEDBACK, EDX_ROOT, CONT_ROOT
+    RELEASE, SUBMITTED, SOURCE, AUTOGRADED, FEEDBACK, EDX_ROOT, CONT_ROOT, HOST_ROOT
 )
 from . import file_manager as fm
 from . import container_manager as cm
@@ -56,7 +56,7 @@ def generate_student_nb(course_id, unit_id, f):
     return max_score
 
 
-def autograde_notebook(username, course_id, unit_id, f, cell_timeout=15, allow_net=False):
+def autograde_notebook(username, course_id, unit_id, f, cell_timeout=60, allow_net=False):
     """Runs nbgrader autograde and returns student score
     
     Requires normalized course_id/unit_id
@@ -78,19 +78,23 @@ def _run_assign_container(nb_filename, course_id, unit_id):
 
     build_container_if_not_exists(course_id)
 
-    host_source_path = os.path.join(EDX_ROOT, course_id, SOURCE, unit_id)
+    cms_source_path = os.path.join(EDX_ROOT, course_id, SOURCE, unit_id)
+    cms_release_path = os.path.join(EDX_ROOT, course_id, RELEASE, unit_id)
+    host_source_path = os.path.join(HOST_ROOT, course_id, SOURCE, unit_id)
     cont_source_path = os.path.join(CONT_ROOT, SOURCE, 'ps1')
-    host_release_path = os.path.join(EDX_ROOT, course_id, RELEASE, unit_id)
+    host_release_path = os.path.join(HOST_ROOT, course_id, RELEASE, unit_id)
     cont_release_path = os.path.join(CONT_ROOT, RELEASE, 'ps1')
 
     cmd = [
+        'sudo', '-u', 'jupyter',
         'docker', 'run', '-t',
         '-v', "{}:{}".format(host_source_path, cont_source_path),
         '-v', "{}:{}".format(host_release_path, cont_release_path),
-        course_id.lower(), 'python', '/home/jupyter/run_grader.py', 
+        course_id.lower(), 'python', '/home/jupyter/run_grader.py',
         '--cmd', 'assign',
         '--nbname', nb_filename,
     ]
+
     p = Popen(cmd, stderr=PIPE, stdout=PIPE)
     out, err = p.communicate()
 
@@ -99,12 +103,25 @@ def _run_assign_container(nb_filename, course_id, unit_id):
 
     nb_name = os.path.splitext(nb_filename)[0]
     result_fn = "{}_results.json".format(nb_name)
-    with open(os.path.join(host_release_path, result_fn), 'r') as f:
+    with open(os.path.join(cms_release_path, result_fn), 'r') as f:
         results = json.load(f)
 
     if not results['success']:
         raise DockerContainerError(results['err'])
     return results['max_score']
+
+
+def fix_notebook(file_path):
+    with open(file_path, 'r') as f:
+        notebook = json.load(f)
+
+    for cell in notebook.get('cells', []):
+        if cell.get('cell_type') == 'code':
+            if 'execution_count' not in cell:
+                cell['execution_count'] = None
+
+    with open(file_path, 'w') as f:
+        json.dump(notebook, f, indent=4)
 
 
 def _run_autograde_container(nb_filename, course_id, unit_id, username, 
@@ -118,21 +135,25 @@ def _run_autograde_container(nb_filename, course_id, unit_id, username,
     fm.create_feedback_dir(course_id, unit_id, username)
 
     # Create host:container directory mappings
-    host_source_path = os.path.join(EDX_ROOT, course_id, SOURCE, unit_id, nb_filename)
+    host_source_path = os.path.join(HOST_ROOT, course_id, SOURCE, unit_id, nb_filename)
     cont_source_path = os.path.join(CONT_ROOT, SOURCE, 'ps1', nb_filename)
 
-    host_submitted_path = os.path.join(EDX_ROOT, course_id, SUBMITTED, username, unit_id, nb_filename)
+    lms_submitted_path = os.path.join(EDX_ROOT, course_id, SUBMITTED, username, unit_id, nb_filename)
+    host_submitted_path = os.path.join(HOST_ROOT, course_id, SUBMITTED, username, unit_id, nb_filename)
     cont_submitted_path = os.path.join(CONT_ROOT, SUBMITTED, username, 'ps1', nb_filename)
 
-    host_autograded_path = os.path.join(EDX_ROOT, course_id, AUTOGRADED, username, unit_id)
+    lms_autograder_path = os.path.join(EDX_ROOT, course_id, AUTOGRADED, username, unit_id)
+    host_autograded_path = os.path.join(HOST_ROOT, course_id, AUTOGRADED, username, unit_id)
     cont_autograded_path = os.path.join("/{}".format(AUTOGRADED))
 
-    host_fb_path = os.path.join(EDX_ROOT, course_id, FEEDBACK, username, unit_id)
+    host_fb_path = os.path.join(HOST_ROOT, course_id, FEEDBACK, username, unit_id)
     cont_fb_path = os.path.join("/{}".format(FEEDBACK))
 
     # Set cell timeout config option
     # NOTE: Could expand to set other nbgrader settings here
     config = ["ExecutePreprocessor.timeout = {}".format(cell_timeout)]
+
+    fix_notebook(lms_submitted_path)
 
     # Create a temp config file and map it into the container
     # NOTE: Could allow for notebook specific settings instead of XBlock wide
@@ -155,7 +176,7 @@ def _run_autograde_container(nb_filename, course_id, unit_id, username,
             cmd += ['--network', 'none']
 
         cmd += [
-            course_id.lower(), 'python', '/home/jupyter/run_grader.py', 
+            course_id.lower(), 'python', '/home/jupyter/run_grader.py',
             '--cmd', 'grade',
             '--nbname', nb_filename,
             '--username', username,
@@ -170,9 +191,9 @@ def _run_autograde_container(nb_filename, course_id, unit_id, username,
     # Get and read results
     nb_name = os.path.splitext(nb_filename)[0]
     result_fn = "{}_results.json".format(nb_name)
-    with open(os.path.join(host_autograded_path, result_fn), 'r') as f:
+    with open(os.path.join(lms_autograder_path, result_fn), 'r') as f:
         results = json.load(f)
-    
+
     if not results['success']:
         raise DockerContainerError(results['err'])
     return {
@@ -186,10 +207,10 @@ def update_requirements(course_id, f):
     """Updates Requirements model file this course_id"""
     course = normalize_course_id(course_id)
     try:
-        with open(f.file.read(), 'r', encoding="utf-8") as file:
-            packages = file.readlines()
+        packages = f.file.read().decode('utf-8').splitlines()
     except AttributeError:
         raise ValidationError("No File Attached")
+    print('PACKAGES: ', packages)
     manager = cm.ContainerManager(course)
     manager.set_requirements(packages)
     manager.build_container()

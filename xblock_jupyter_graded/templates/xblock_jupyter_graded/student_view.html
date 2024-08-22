@@ -40,7 +40,24 @@
     <p><b>Total Score:</b> <span id="student_score_{{ xblock_id }}">{{ student_score }}</span> / <span id="max_score_{{ xblock_id }}">{{ max_score }}</span></p>
 
 	<div id="section_scores_{{ xblock_id }}">
-		{% include "xblock_jupyter_graded/section_scores.html" %}
+		<p><b>Section Scores:</b></p>
+        <table class="section-scores">
+            <tr>
+                <th class="text-center">Cell Name</th>
+                <th class="text-center">Score</th>
+            <tr>
+        {% for section in section_scores %}
+            {% if section.failed_tests %}
+                <tr class="result-danger bg-danger">
+            {% else %}
+                <tr class="result-success bg-success">
+            {% endif %}
+                <td>{{ section.name }}</td>
+                <td class="text-center">{{ section.score }} / {{ section.max_score }}</td>
+            </tr>
+        {% endfor %}
+        </table>
+        {# {% include "xblock_jupyter_graded/section_scores.html" %} #}
 	</div>
 
     {% else %}

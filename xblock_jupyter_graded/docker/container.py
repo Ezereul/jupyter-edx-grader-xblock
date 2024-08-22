@@ -109,12 +109,13 @@ class AssignContainer(BaseContainer):
     def generate_student_version(self, nb_path):
         """Runs nbgrader assign to generate student version of notebook"""
         args = [
-            'nbgrader', 'assign',
+            'nbgrader', 'generate_assignment',
             '--create', '--force',
             '--course-dir', self.root,
             '--db', self.db_path,
             '--assignment', self.pset_id,
             '--notebook', os.path.splitext(self.nb_filename)[0],
+            '--debug'
         ]
         p = Popen(args, stderr=PIPE, stdout=PIPE)
         out, err = p.communicate()
@@ -305,7 +306,6 @@ class AutoGradeContainer(BaseContainer):
             print("No checkers - return None")
             return
 
-        print("Running Checkers: {}".format(self.autograded_checkers))
         # Load autograded nb into dict
         nb_path = os.path.join(self.root, "autograded", self.username, 
             self.pset_id, self.nb_filename)
