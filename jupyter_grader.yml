@@ -16,6 +16,6 @@ patches:
           RUN grep -qxF 'www-data ALL=(jupyter) NOPASSWD:/usr/bin/docker' /etc/sudoers || echo 'www-data ALL=(jupyter) NOPASSWD:/usr/bin/docker' >> /etc/sudoers
           RUN grep -qxF 'app ALL=(jupyter) NOPASSWD:/usr/bin/docker' /etc/sudoers || echo 'app ALL=(jupyter) NOPASSWD:/usr/bin/docker' >> /etc/sudoers
           RUN mkdir -p /var/www/nbgrader/courses/ && chown app:app /var/www/nbgrader/courses/
-          ENV JUPYTER_GRADER_HOST_ROOT=/var/www/nbgrader/courses
+          ENV JUPYTER_GRADER_HOST_ROOT=/home/tutor/nbgrader/courses
           USER app
           ## chown root:docker /var/run/docker.sock ##
